@@ -9,12 +9,19 @@ import numpy
 import spacy
 import tqdm
 import typer
+import torch
 
 try:
     from spacy.kb import InMemoryLookupKB as DefaultKB
 except ImportError:
     from spacy.kb import KnowledgeBase as DefaultKB
 import wiki
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+if device == "cpu":
+    print("WARN: Using CPU. Performance will be slow.")
+else:
+    spacy.require_gpu()
 
 
 def main(vectors_model: str, language: str, n_process: int):
@@ -24,10 +31,11 @@ def main(vectors_model: str, language: str, n_process: int):
     """
 
     logger = logging.getLogger(__name__)
-    nlp = spacy.load(vectors_model, exclude=["tagger", "lemmatizer", "attribute_ruler"])
+    nlp = spacy.load(vectors_model, exclude=[])
 
     logger.info("Constructing knowledge base.")
-    kb = DefaultKB(vocab=nlp.vocab, entity_vector_length=nlp.vocab.vectors_length)
+    kb = DefaultKB(vocab=nlp.vocab,
+                   entity_vector_length=nlp.vocab.vectors_length)
     entity_list: List[str] = []
     count_list: List[int] = []
     vector_list: List[numpy.ndarray] = []  # type: ignore
@@ -58,7 +66,8 @@ def main(vectors_model: str, language: str, n_process: int):
         entity_list.append(qid)
         count_list.append(entities[qid].count)
         vector_list.append(
-            desc_vector if isinstance(desc_vector, numpy.ndarray) else desc_vector.get()
+            desc_vector if isinstance(
+                desc_vector, numpy.ndarray) else desc_vector.get()
         )
     kb.set_entities(
         entity_list=entity_list, vector_list=vector_list, freq_list=count_list

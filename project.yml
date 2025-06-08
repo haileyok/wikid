@@ -11,8 +11,8 @@ description: |
 vars:
   version: "0.0.2"
   language: "en"
-  vectors_model: "en_core_web_lg"
-  filter: "True"
+  vectors_model: "en_core_web_trf"
+  filter: "False"
   n_process: 1    # set to -1 to set to multiprocessing.cpu_count() automatically
 
 directories: ["assets", "configs", "scripts", "output"]
@@ -21,19 +21,9 @@ assets:
   - dest: 'assets/wikidata_entity_dump.json.bz2'
     url: 'https://dumps.wikimedia.org/wikidatawiki/entities/latest-all.json.bz2'
     description: Wikidata entity dump. Download can take a long time!
-    extra: True
   - dest: 'assets/${vars.language}-wikipedia_dump.xml.bz2'
     url: 'https://dumps.wikimedia.org/${vars.language}wiki/latest/${vars.language}wiki-latest-pages-articles-multistream.xml.bz2'
     description: Wikipedia dump. Download can take a long time!
-    extra: True
-  - dest: 'assets/wikidata_entity_dump_filtered.json.bz2'
-    url: 'https://github.com/explosion/projects/releases/download/nel-benchmark-filtered-wiki-data/wikidata_entity_dump_filtered.json.bz2'
-    description: Filtered Wikidata entity dump for demo purposes (English only).
-    checksum: 'ba2d979105abf174208608b942242fcb'
-  - dest: 'assets/wikipedia_dump_filtered.xml.bz2'
-    url: 'https://github.com/explosion/projects/releases/download/nel-benchmark-filtered-wiki-data/wikipedia_dump_filtered.xml.bz2'
-    description: Filtered Wikipedia dump for demo purposes (English only).
-    checksum: 'cb624eaa5887fe1ff47a9206c9bdcfd8'
 
 workflows:
   all:
